@@ -49,13 +49,17 @@ int main(int argc, char** argv)
 	Shader shader = Shader("shaders/shader.vs", "shaders/shader.fs");
 
 	// set up vertex data (and buffers) and configure vertex attributes
-#if 1
+	const int sizeOfPosition = 3;
+	const int sizeOfColour = 3;
+	const int sizeOfTexCoord = 2;
+	const int sizeOfOneVertex = sizeOfPosition + sizeOfColour + sizeOfTexCoord;
+#if 0
 	// triangle
 	float vertices[] = {
 		// positions         // colours         // texture coords
-		 0.0f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  // top
-		 0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // bottom right
-		-0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  // bottom left
+		 0.0f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  1.0f, 1.0f,  // top
+		 0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f,  // bottom right
+		-0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 0.0f,  // bottom left
 	};
 	unsigned int indices[] = {
 		0, 1, 2,
@@ -63,10 +67,11 @@ int main(int argc, char** argv)
 #else
 	// rectangle
 	float vertices[] = {
-		 0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 1.0f, // top right
-		 0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f, // bottom right
-		-0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f, // bottom left
-		-0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f, // top left
+		// positions         // colours         // texture coords
+		 0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 1.0f,  1.0f, 1.0f,  // top right
+		 0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f,  // bottom right
+		-0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 0.0f,  // bottom left
+		-0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  0.0f, 1.0f,  // top left
 	};
 	unsigned int indices[] = {
 		0, 1, 3, // first triangle
@@ -84,11 +89,17 @@ int main(int argc, char** argv)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 	// position attrib
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, sizeOfPosition, GL_FLOAT, GL_FALSE, sizeOfOneVertex * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 	// colour attrib
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, sizeOfColour, GL_FLOAT, GL_FALSE, sizeOfOneVertex * sizeof(float), (void*)(sizeOfPosition * sizeof(float)));
 	glEnableVertexAttribArray(1);
+	// texcoord attrib
+	glVertexAttribPointer(2, sizeOfTexCoord, GL_FLOAT, GL_FALSE, sizeOfOneVertex * sizeof(float), (void*)((sizeOfPosition + sizeOfColour) * sizeof(float)));
+	glEnableVertexAttribArray(2);
+
+	// load texture
+	Texture texture = Texture("textures/container.jpg");
 
 	// uncomment for wireframe
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -105,8 +116,9 @@ int main(int argc, char** argv)
 
 		// draw triangle
 		shader.use();
+		texture.use();
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
 
 		// swap buffers and poll inputs
 		glfwSwapBuffers(window);
