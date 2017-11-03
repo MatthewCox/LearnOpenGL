@@ -2,6 +2,7 @@
 #define __SHADER_H__
 
 #include <glad/glad.h>
+#include <glm/glm.hpp>
 
 #include <string>
 
@@ -18,8 +19,16 @@ public:
 	void setInt(const std::string &name, int value) const;
 	void setFloat(const std::string &name, float value) const;
 
-	void setFloat3(const std::string &name, float v0, float v1, float v2) const;
-	void setFloat4(const std::string &name, float v0, float v1, float v2, float v3) const;
+	void setVec2(const std::string &name, float x, float y) const;
+	void setVec2(const std::string &name, const glm::vec2& v) const;
+	void setVec3(const std::string &name, float x, float y, float z) const;
+	void setVec3(const std::string &name, const glm::vec3& v) const;
+	void setVec4(const std::string &name, float x, float y, float z, float w) const;
+	void setVec4(const std::string &name, const glm::vec4& v) const;
+
+	void setMat2(const std::string &name, const glm::mat2& m) const;
+	void setMat3(const std::string &name, const glm::mat3& m) const;
+	void setMat4(const std::string &name, const glm::mat4& m) const;
 
 private:
 	static void checkCompileErrors(unsigned int shader, std::string type);

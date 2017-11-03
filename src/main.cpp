@@ -1,5 +1,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
 
@@ -25,7 +28,7 @@ int main(int argc, char** argv)
 #endif
 
 	// create our GLFW window
-	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "ModernOpenGL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "LearnOpenGL", NULL, NULL);
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -71,7 +74,7 @@ int main(int argc, char** argv)
 		 0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 1.0f,  1.0f, 1.0f,  // top right
 		 0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f,  // bottom right
 		-0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 0.0f,  // bottom left
-		-0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  0.0f, 1.0f,  // top left
+		-0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 0.0f,  0.0f, 1.0f,  // top left
 	};
 	unsigned int indices[] = {
 		0, 1, 3, // first triangle
@@ -115,6 +118,11 @@ int main(int argc, char** argv)
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// draw triangle
+		glm::mat4 transform = glm::mat4(1.0f);
+		transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
+		transform = glm::rotate(transform, static_cast<float>(glfwGetTime()), glm::vec3(0.0f, 0.0f, 1.0f));
+		shader.setMat4("transform", transform);
+
 		shader.use();
 		texture.use();
 		glBindVertexArray(VAO);
@@ -124,6 +132,11 @@ int main(int argc, char** argv)
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+
+	// clean up GPU resources
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
 
 	// clean up glfw
 	glfwTerminate();

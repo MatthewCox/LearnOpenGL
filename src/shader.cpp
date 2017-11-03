@@ -1,5 +1,7 @@
 #include "shader.h"
 
+#include <glm/gtc/type_ptr.hpp>
+
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -77,14 +79,49 @@ void Shader::setFloat(const std::string & name, float value) const
 	glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
 }
 
-void Shader::setFloat3(const std::string & name, float v0, float v1, float v2) const
+void Shader::setVec2(const std::string & name, float x, float y) const
 {
-	glUniform3f(glGetUniformLocation(ID, name.c_str()), v0, v1, v2);
+	glUniform2f(glGetUniformLocation(ID, name.c_str()), x, y);
 }
 
-void Shader::setFloat4(const std::string & name, float v0, float v1, float v2, float v3) const
+void Shader::setVec2(const std::string & name, const glm::vec2 & v) const
 {
-	glUniform4f(glGetUniformLocation(ID, name.c_str()), v0, v1, v2, v3);
+	glUniform2fv(glGetUniformLocation(ID, name.c_str()), 1, glm::value_ptr(v));
+}
+
+void Shader::setVec3(const std::string & name, float x, float y, float z) const
+{
+	glUniform3f(glGetUniformLocation(ID, name.c_str()), x, y, z);
+}
+
+void Shader::setVec3(const std::string & name, const glm::vec3 & v) const
+{
+	glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, glm::value_ptr(v));
+}
+
+void Shader::setVec4(const std::string & name, float x, float y, float z, float w) const
+{
+	glUniform4f(glGetUniformLocation(ID, name.c_str()), x, y, z, w);
+}
+
+void Shader::setVec4(const std::string & name, const glm::vec4 & v) const
+{
+	glUniform4fv(glGetUniformLocation(ID, name.c_str()), 1, glm::value_ptr(v));
+}
+
+void Shader::setMat2(const std::string & name, const glm::mat2 & m) const
+{
+	glUniformMatrix2fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(m));
+}
+
+void Shader::setMat3(const std::string & name, const glm::mat3 & m) const
+{
+	glUniformMatrix3fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(m));
+}
+
+void Shader::setMat4(const std::string & name, const glm::mat4 & m) const
+{
+	glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(m));
 }
 
 void Shader::checkCompileErrors(unsigned int shader, std::string type)
