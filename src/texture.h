@@ -16,7 +16,7 @@ private:
 	int numChannels = 0;
 
 public:
-	Texture(const GLchar* texturePath);
+	Texture(const GLchar * texturePath);
 	void use();
 };
 
