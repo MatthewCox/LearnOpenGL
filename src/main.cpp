@@ -8,13 +8,23 @@
 
 #include "shader.h"
 #include "texture.h"
+#include "camera.h"
+
+// forward declarations
+void framebufferSizeCallback(GLFWwindow* window, int width, int height);
+void mouseCallback(GLFWwindow* window, double xPos, double yPos);
+void processInput(GLFWwindow *window);
 
 const unsigned int WINDOW_WIDTH = 800;
 const unsigned int WINDOW_HEIGHT = 600;
 
-// forward declarations
-void framebufferSizeCallback(GLFWwindow* window, int width, int height);
-void processInput(GLFWwindow *window);
+float mouseLastX = static_cast<float>(WINDOW_WIDTH / 2);
+float mouseLastY = static_cast<float>(WINDOW_HEIGHT / 2);
+
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
+
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
 int main(int argc, char** argv)
 {
@@ -36,18 +46,23 @@ int main(int argc, char** argv)
 		return -1;
 	}
 	glfwMakeContextCurrent(window);
-	// register window resize callback
-	glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
-	// init GL function pointers with glad
+	// glfw window configuration
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+	// register callbacks
+	glfwSetFramebufferSizeCallback(window, framebufferSizeCallback); // window resize
+	glfwSetCursorPosCallback(window, mouseCallback); // mouse position
+
+	// init OpenGL function pointers with glad
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
 
-	// set our viewport dimensions
-	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+	// configure global OpenGL state
+	glEnable(GL_DEPTH_TEST);
 
 	Shader shader = Shader("shaders/shader.vs", "shaders/shader.fs");
 
@@ -110,19 +125,30 @@ int main(int argc, char** argv)
 	// render loop
 	while (!glfwWindowShouldClose(window))
 	{
+		// frame time
+		float currentFrame = static_cast<float>(glfwGetTime());
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
 		// handle inputs
 		processInput(window);
 
 		// render
 		glClearColor(0.39f, 0.58f, 0.93f, 1.0f); // Cornflower Blue, of course
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// draw triangle
-		glm::mat4 transform = glm::mat4(1.0f);
-		transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
-		transform = glm::rotate(transform, static_cast<float>(glfwGetTime()), glm::vec3(0.0f, 0.0f, 1.0f));
-		shader.setMat4("transform", transform);
+		// set up model-view-projection matrices
+		glm::mat4 model = glm::mat4(1.0f);
+		glm::mat4 view = glm::mat4(1.0f);
+		glm::mat4 projection = glm::mat4(1.0f);
+		model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		view = camera.getViewMatrix();
+		projection = glm::perspective(glm::radians(45.0f), static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT), 0.1f, 100.0f);
+		shader.setMat4("model", model);
+		shader.setMat4("view", view);
+		shader.setMat4("projection", projection);
 
+		// draw things
 		shader.use();
 		texture.use();
 		glBindVertexArray(VAO);
@@ -148,8 +174,39 @@ void framebufferSizeCallback(GLFWwindow* window, int width, int height)
 	glViewport(0, 0, width, height);
 }
 
+void mouseCallback(GLFWwindow * window, double xPos, double yPos)
+{
+	float fXPos = static_cast<float>(xPos);
+	float fYPos = static_cast<float>(yPos);
+
+	static bool firstMouseMovement = true;
+	if (firstMouseMovement)
+	{
+		mouseLastX = fXPos;
+		mouseLastY = fYPos;
+		firstMouseMovement = false;
+	}
+
+	float xOffset = fXPos - mouseLastX;
+	float yOffset = mouseLastY - fYPos;
+
+	mouseLastX = fXPos;
+	mouseLastY = fYPos;
+
+	camera.processMouseMovement(xOffset, yOffset);
+}
+
 void processInput(GLFWwindow *window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		camera.processKeyboard(FORWARD, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		camera.processKeyboard(BACKWARD, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		camera.processKeyboard(LEFT, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		camera.processKeyboard(RIGHT, deltaTime);
 }

@@ -8,9 +8,10 @@
 
 class Shader
 {
-public:
+private:
 	unsigned int ID; // GL shader program ID
 
+public:
 	Shader(const GLchar* vertexPath, const GLchar* fragmentPath);
 
 	void use();
