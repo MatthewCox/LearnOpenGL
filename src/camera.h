@@ -34,6 +34,7 @@ private:
 public:
 	Camera(glm::vec3 & position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 & up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH);
 	glm::mat4 getViewMatrix() const;
+	const glm::vec3 & getPosition() const;
 	void processKeyboard(CameraMovement direction, float deltaTime);
 	void processMouseMovement(float xOffset, float yOffset, bool constrainPitch = true);
 
