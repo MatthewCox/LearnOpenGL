@@ -5,7 +5,7 @@
 *.slo
 *.lo
 *.o
-*.obj
+LearnOpenGL/**/*.obj
 
 # Precompiled Headers
 *.gch
