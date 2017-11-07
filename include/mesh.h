@@ -4,11 +4,13 @@
 #include <map>
 #include <vector>
 
-#include <glad/glad.h>
+#include <glbinding/gl/gl.h>
 #include <glm/glm.hpp>
 
 #include "shader.h"
 #include "texture.h"
+
+using namespace gl;
 
 struct Vertex
 {

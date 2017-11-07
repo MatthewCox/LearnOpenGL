@@ -1,10 +1,12 @@
 #ifndef __SHADER_H__
 #define __SHADER_H__
 
-#include <glad/glad.h>
+#include <glbinding/gl/gl.h>
 #include <glm/glm.hpp>
 
 #include <string>
+
+using namespace gl;
 
 class Shader
 {

@@ -1,5 +1,9 @@
-#include <glad/glad.h>
+#include <glbinding/gl/gl.h>
+#include <glbinding/Binding.h>
+
+#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -9,6 +13,8 @@
 #include "shader.h"
 #include "model.h"
 #include "camera.h"
+
+using namespace gl;
 
 // forward declarations
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
@@ -54,12 +60,8 @@ int main(int argc, char** argv)
 	glfwSetFramebufferSizeCallback(window, framebufferSizeCallback); // window resize
 	glfwSetCursorPosCallback(window, mouseCallback); // mouse position
 
-	// init OpenGL function pointers with glad
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
-		std::cout << "Failed to initialize GLAD" << std::endl;
-		return -1;
-	}
+	// init OpenGL function pointers with glbinding
+	glbinding::Binding::initialize();
 
 	// configure global OpenGL state
 	glEnable(GL_DEPTH_TEST);

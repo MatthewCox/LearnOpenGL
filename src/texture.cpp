@@ -1,5 +1,7 @@
 #include "texture.h"
 
+#include <glbinding/gl/gl.h>
+
 #include <iostream>
 
 Texture::Texture(const GLchar * texturePath)

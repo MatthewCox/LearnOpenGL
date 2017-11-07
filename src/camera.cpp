@@ -4,7 +4,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-Camera::Camera(glm::vec3 & position, glm::vec3 & up, float yaw, float pitch)
+Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch)
 	: position(position)
 	, worldUp(up)
 	, yaw(yaw)

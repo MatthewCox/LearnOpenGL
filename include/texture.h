@@ -1,11 +1,13 @@
 #ifndef __TEXTURE_H__
 #define __TEXTURE_H__
 
-#include "stb_image.h"
-
-#include <glad/glad.h>
+#include <glbinding/gl/gl.h>
 
 #include <string>
+
+#include "stb_image.h"
+
+using namespace gl;
 
 class Texture
 {

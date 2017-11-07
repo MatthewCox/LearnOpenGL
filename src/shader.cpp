@@ -1,10 +1,13 @@
 #include "shader.h"
 
+#include <glbinding/gl/gl.h>
 #include <glm/gtc/type_ptr.hpp>
 
 #include <fstream>
 #include <sstream>
 #include <iostream>
+
+using namespace gl;
 
 Shader::Shader(const GLchar * vertexPath, const GLchar * fragmentPath)
 {
